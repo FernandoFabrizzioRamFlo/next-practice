@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mockAdmin } from "@/lib/types";
+import { mockAdmin, IUser } from "@/lib/types";
 import jwt from 'jsonwebtoken';
 
 
@@ -24,12 +24,20 @@ export async function POST(req: NextRequest) {
         //mockauth
         const auth: boolean = (email == mockAdmin.email) && (password == mockAdmin.password);
         if (auth) {
+            const user :IUser ={
+                id:mockAdmin.id ,
+                email:mockAdmin.email ,
+                name: mockAdmin.name ,
+                roles: mockAdmin.roles,
+                password:null
+            }
             const token:string = await generateJWT(
-                {id:mockAdmin.id , email:mockAdmin.email , username: mockAdmin.name , roles: mockAdmin.roles},
+                user,
                 secret,{expiresIn:'1h'}
             )
-            const res: NextResponse = NextResponse.json({message:"success"},{status:200});
-            res.cookies.set("session",token,{httpOnly:false,sameSite:'lax',path:"/",maxAge:60*60});
+            const url = new URL('/home', req.url);
+            const res = NextResponse.redirect(url, 303);
+            res.cookies.set("session",token,{httpOnly:true,sameSite:'lax',path:"/",maxAge:60*60});
             return res;
         }
         return NextResponse.json({ message: "Error en la solicitud" }, {status: 401});

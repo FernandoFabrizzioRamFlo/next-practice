@@ -3,7 +3,16 @@ export interface IUser {
     email: string;
     name?: string;        // opcional si no lo capturas siempre
     roles: string[]; 
-    password: string;     // p.ej. ['admin','editor']
+    password: string | null;     
+}
+export const createBlankIUser = (): IUser =>{
+    return{
+        id:"",
+        email:"",
+        name:"",
+        roles:[],
+        password:null
+    };
 }
 
 export const mockAdmin:IUser ={
@@ -13,3 +22,4 @@ export const mockAdmin:IUser ={
     roles:["admin"],
     password:"admin"
 }
+

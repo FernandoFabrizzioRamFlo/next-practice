@@ -1,77 +1,48 @@
 'use client'
 
 import React from 'react';
-import { Button, Form, Input } from 'antd';
-import { redirect } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useUser } from '@/contexts/users/userContext';
+import Category from "@/components/navRoutes/Category"
+import {mockCategory} from"@/lib/mocks/mockCategories";
 
+const Home: React.FC = () => {
+    const [time, setTime] = useState(new Date());
+    const { user, setUser } = useUser();
+    const [hasMounted, setHasMounted] = useState(false);
 
-const Login: React.FC = () => {
-    const [form] = Form.useForm();
+    useEffect(() => {
+        setHasMounted(true);
+        setTime(new Date());
+        const iv = setInterval(() => setTime(new Date()), 1000);
+        return () => clearInterval(iv);
+    }, [])
 
-    const onFinish = async () => {
-        const {email,password} = form.getFieldsValue()
-        console.log('Success:', email,password);
-        try{
-            const res = await fetch('/api/auth/handleLogin',{
-                method: "POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify({email:email,password:password})
-            });
-            if(res.ok) redirect('/home')
-            alert("Credenciales inválidas")
-        }catch{
-            alert("Error procesando la solicitud")
-        }
-    };
-
-    return(
-        <div className='flex w-full h-[400px] justify-center items-center'>
-            <Form
-                form={form}
-                className="max-w-[600px]"
-                name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                autoComplete="off"
-            >
-                <Form.Item
-                    label={<span className="text-white">Usuario</span>}
-                    name="email"
-                    rules={[{ required: true, message: 'Por favor introduzca su correo' }]}
-                >
-                    <Input
-                        className="text-white placeholder-neutral-600 bg-transparent border-white"
-                        placeholder="ejemplo@mail.com"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label={<span className="text-white">Contraseña</span>}
-                    name="password"
-                    rules={[{ required: true, message: 'Por favor introduzca su contraseña.' }]}
-                >
-                    <Input.Password
-                        className="text-white placeholder-gray-700 bg-transparent border-white"
-                        placeholder="contraseña"
-                    />
-                </Form.Item>
-
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="bg-white text-black hover:bg-gray-200"
-                    >
-                        Enviar
-                    </Button>
-                </Form.Item>
-            </Form>
+    return (
+        <div className='flex w-full justify-center flex-col'>
+            <div className='flex flex-row w-full items-center border-b px-10 py-5  border-gray-700'>
+                <div className='flex w-2/3 items-center'><span className='text-2xl'> Bienvenido {user?.name}</span></div>
+                <div className='flex w-1/3 '>
+                    {hasMounted && time ? (
+                        <span className="text-2xl font-mono font-thin text-[#005B94] ">
+                            {time.toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                            })}
+                        </span>
+                    ) : (
+                        <span className="text-2xl font-mono">--:--:--</span>
+                    )}
+                </div>
+            </div>
+            {/* Contenedor de Favoritos*/}
+            <div className='flex flex-row w-full px-10 py-5' >
+                <span className='text-xl'>Favoritos</span>
+            </div>
+            <div><Category name={mockCategory.name} routes={mockCategory.routes}  /></div>
         </div>
     )
 };
 
-export default Login;
+export default Home;
