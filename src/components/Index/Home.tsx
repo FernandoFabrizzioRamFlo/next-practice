@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/users/userContext';
 import Category from "@/components/navRoutes/Category"
 import {mockCategory} from"@/lib/mocks/mockCategories";
+import {Divider} from "antd";
 
 const Home: React.FC = () => {
     const [time, setTime] = useState(new Date());
@@ -20,7 +21,7 @@ const Home: React.FC = () => {
 
     return (
         <div className='flex w-full justify-center flex-col'>
-            <div className='flex flex-row w-full items-center border-b px-10 py-5  border-gray-700'>
+            <div className='flex flex-row w-full items-center  px-10 pt-5'>
                 <div className='flex w-2/3 items-center'><span className='text-2xl'> Bienvenido {user?.name}</span></div>
                 <div className='flex w-1/3 '>
                     {hasMounted && time ? (
@@ -36,11 +37,12 @@ const Home: React.FC = () => {
                     )}
                 </div>
             </div>
+            <Divider orientation="left" style={{ borderColor: '#808080'}}/>
             {/* Contenedor de Favoritos*/}
-            <div className='flex flex-row w-full px-10 py-5' >
-                <span className='text-xl'>Favoritos</span>
+            <Divider orientation="left" style={{ borderColor: '#808080',fontSize:'24px' }}>Favoritos</Divider>
+            <div>
+                <Category name={mockCategory.name} routes={mockCategory.routes}/>
             </div>
-            <div><Category name={mockCategory.name} routes={mockCategory.routes}  /></div>
         </div>
     )
 };

@@ -19,10 +19,10 @@ const Category: React.FC<ICategory>= ({name,routes}) => {
     const router = useRouter();
     return (
         <div className='flex flex-col w-full px-10 py-5'>
-            <div><span>{name}</span></div>
+            <div><span className='font-bold text-xl'>{name}</span></div>
             {routes.map( route =>(
                 <div key={route.path}>
-                    <button  onClick={() => router.push(route.path)}>{route.name}</button>
+                    <button  onClick={() => router.push(route.path)}><span className='text-base hover:text-blue-800 hover:text-lg' >{route.name}</span></button>
                 </div>
             ))}
         </div>
