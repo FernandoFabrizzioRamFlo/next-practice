@@ -1,4 +1,4 @@
-// app/api/me/route.ts
+// app/api/auth/getCurrentUser/route.ts
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { verifyJWT } from "@/lib/auth/readToken"; // ajusta ruta si es necesario

@@ -1,3 +1,4 @@
+//ozcabaudit\src\app\(app)\home\layout.tsx
 import type { Metadata } from 'next';
 import HomeWrapper from "@/app/(app)/home/HomeWrapper"
 
