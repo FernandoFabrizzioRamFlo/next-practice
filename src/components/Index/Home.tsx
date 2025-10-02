@@ -3,12 +3,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/users/userContext';
+import Loader from "@/components/common/Loader";
 import Category from "@/components/navRoutes/Category"
 import {mockCategory} from"@/lib/mocks/mockCategories";
 import {Divider} from "antd";
 
 const Home: React.FC = () => {
     const [time, setTime] = useState(new Date());
+    const [loading,setLoading] = useState(false);
     const { user, setUser } = useUser();
     const [hasMounted, setHasMounted] = useState(false);
 
@@ -19,6 +21,22 @@ const Home: React.FC = () => {
         return () => clearInterval(iv);
     }, [])
 
+    useEffect(()=>{
+        const loadApp = async () =>{
+            if(!user || user.id == ""){
+                return;
+            }
+            try{
+
+            }catch(e){
+
+            }
+        }
+    })
+
+    if (loading) {
+        return <Loader message="Obteniendo datos de usuario..." />;
+    }
     return (
         <div className='flex w-full justify-center flex-col'>
             <div className='flex flex-row w-full items-center  px-10 pt-5'>

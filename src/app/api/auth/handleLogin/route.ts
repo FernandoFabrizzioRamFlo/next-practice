@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         console.log("EMAIL AND PASSWORD:", email, password)
         if (!email || !password) return NextResponse.json({ message: 'Email y password son requeridos' }, { status: 400 });
 
-        const expressResp = await fetch(EXPRESS_BASE_URL + "user/submit-login", {
+        const expressResp = await fetch(EXPRESS_BASE_URL + "login/submit", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             // no-store para evitar caches accidentales

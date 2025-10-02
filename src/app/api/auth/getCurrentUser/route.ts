@@ -22,15 +22,16 @@ export async function GET(req:NextRequest) {
     try {
         const decoded = await admin.auth().verifySessionCookie(session, true)
         const firebase_uid = decoded.uid
-        console.log("firebase_uid",firebase_uid)
     
         const expressResp = await fetch(EXPRESS_BASE_URL + "user/user-details", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' ,cookie: `session=${session}`},
+            credentials: 'include',
             // no-store para evitar caches accidentales
             cache: 'no-store',
             body: JSON.stringify({id_firebase:firebase_uid}),
         }); 
+        console.log(expressResp)
         if(!expressResp.ok) throw new Error();
         const {success,value} = await expressResp.json();
         if(!success) throw new Error();
