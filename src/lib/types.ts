@@ -1,8 +1,10 @@
+import Category from "@/components/navRoutes/Category";
+
 export interface IUser {
     id: string;
     email: string;
     name?: string;   
-    roles: IRole[];  
+    roles: string[];  
 }
 export interface IRoute{
     id: string;
@@ -20,6 +22,11 @@ export interface ICategoria{
     id: string;
     nombre: string;
     descripcion:string;
+}
+
+export interface ISiteMapPathResponseItem{
+    category:ICategoria;
+    paths: IRoute[];
 }
 
 export interface ICliente{
