@@ -14,7 +14,7 @@ export default function Header(){
             </div>
             <div className="headerColumn w-2/3 flex flex-row justify-end pr-4 ">
                 <div className="w-3/12   flex justify-center items-center">
-                    <button  className="flex flex-row w-full justify-center gap-4" onClick={()=>(router.push("/home/sitemap"))} >
+                    <button  className="flex flex-row w-full justify-center gap-4" onClick={()=>(router.push("/sitemap"))} >
                         <span className="headerBtnText self-center">Mapa de Sitio</span>
                         <FaRegCompass size={24} color="white"className="self-center"/>
                     </button>

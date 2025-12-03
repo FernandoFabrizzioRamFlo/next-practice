@@ -1,7 +1,6 @@
-// app/api/auth/getCurrentUser/route.ts
 import { NextRequest,NextResponse } from 'next/server';
 import * as admin from 'firebase-admin';
-import { IUser } from '@/lib/types';
+import { IUser } from '@/app/users/types/users.types'; // Updated import path
 export const runtime = 'nodejs';
 
 const EXPRESS_BASE_URL = process.env.EXPRESS_BASE_URL;
@@ -23,13 +22,11 @@ export async function GET(req:NextRequest) {
         const decoded = await admin.auth().verifySessionCookie(session, true)
         const firebase_uid = decoded.uid
     
-        const expressResp = await fetch(EXPRESS_BASE_URL + "user/user-details", {
+        const expressResp = await fetch(EXPRESS_BASE_URL + "/user/details", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' ,cookie: `session=${session}`},
+            headers: { 'Content-Type': 'application/json'},
             credentials: 'include',
-            // no-store para evitar caches accidentales
             cache: 'no-store',
-            body: JSON.stringify({id_firebase:firebase_uid}),
         }); 
         console.log(expressResp)
         if(!expressResp.ok) throw new Error();
@@ -37,10 +34,11 @@ export async function GET(req:NextRequest) {
         if(!success) throw new Error();
 
         const user:IUser ={
-                id: value.ID_USUARIO ?? "",
-                email: value.EMAIL ?? "",
-                name: value.NOMBRE ?? "", 
-                roles:value.ROL ?? [] 
+                id: value.id ?? "", // Corrected mapping to lowercase 'id'
+                email: value.email ?? "", // Corrected mapping to lowercase 'email'
+                name: value.name ?? "", // Corrected mapping to lowercase 'name'
+                phone_number: value.phone_number ?? "", // Added phone_number
+                roles:value.roles ?? [] // Corrected mapping to lowercase 'roles'
         }
 
         return NextResponse.json(user, { status: 200 });

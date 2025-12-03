@@ -1,7 +1,7 @@
 'use client'
 //ozcabaudit\src\contexts\users\userContext.tsx
 import { createContext, useContext,useState, ReactNode} from 'react';
-import {IUser} from "@/lib/types";
+import {IUser} from "@/app/users/types/users.types";
 
 type UserContextType = {
     user: IUser|null;
@@ -10,9 +10,16 @@ type UserContextType = {
 
 export const UserContext = createContext<UserContextType|undefined>(undefined);
 
-export const UserProvider = ({children,value}: {children : ReactNode, value:UserContextType}) =>{
+export const UserProvider = ({children}: {children : ReactNode}) =>{
+    const [user, setUser] = useState<IUser | null>(null);
+
+    const contextValue = {
+        user,
+        setUser,
+    };
+
     return(
-        <UserContext.Provider value={value}>
+        <UserContext.Provider value={contextValue}>
             {children}
         </UserContext.Provider>
     );

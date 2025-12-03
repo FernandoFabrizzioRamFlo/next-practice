@@ -18,10 +18,10 @@ const app = admin.apps.length
 export async function GET(req: NextRequest) {
     try{
         const session = req.cookies.get('session')?.value;
-        if(!session) return NextResponse.json({success:false},{status:401});
+        if(!session) return NextResponse.json({success:false, message:'No session found'},{status:401});
         await admin.auth().verifySessionCookie(session, true);
         return NextResponse.json({success:true},{status:200});
     }catch{
-        return NextResponse.json({success:false},{status:401});
+        return NextResponse.json({success:false, message:'Session verification failed'},{status:401});
     }
 }

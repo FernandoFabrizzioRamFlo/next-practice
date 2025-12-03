@@ -1,15 +1,15 @@
 import { NextResponse, NextRequest } from 'next/server'
 export const config = {
-    matcher: ['/', '/home', '/home/:path*']
+    matcher: ['/', '/home/:path*', '/inspections/:path*', '/clients/:path*', '/sitemap/:path*']
 }
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
     const token = req.cookies.get('session')?.value;
     console.log(token)
-    if (pathname.startsWith('/home') || pathname === '/') {
+    if (pathname.startsWith('/home') || pathname.startsWith('/inspections') || pathname.startsWith('/clients') || pathname.startsWith('/sitemap') || pathname === '/') {
         if (!token) {
-            console.log("midddleware prevented access to /home/:path (token missing)")
+            console.log("Middleware impidió el acceso a /home/:path (token ausente)")
             const url = req.nextUrl.clone()
             url.pathname = '/login'
             return NextResponse.redirect(url)
@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
             }
             return NextResponse.next();
         } catch {
-            console.log("midddleware prevented access to /home/:path (invalid token)")
+            console.log("Middleware impidió el acceso a /home/:path (token inválido)")
             const url = req.nextUrl.clone()
             url.pathname = '/login'
             return NextResponse.redirect(url)

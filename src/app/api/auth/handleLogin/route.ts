@@ -16,33 +16,34 @@ const app = admin.apps.length
         projectId: process.env.FIREBASE_PROJECT_ID || undefined,
     });
 
-//Configura duración de la sesión
+// Configure session duration
 const SESSION_MAX_AGE_MS = Number(process.env.FB_SESSION_MAX_AGE_MS ?? 1 * 60 * 60 * 1000); // 1h
-// WHY: Vida moderada. Puedes subirla (p.ej. 5 días) si tu caso lo requiere.
+// WHY: Moderate lifespan. You can increase it (e.g., 5 days) if your use case requires it.
 const EXPRESS_BASE_URL = process.env.EXPRESS_BASE_URL;
 
 export async function POST(req: NextRequest) {
     try {
         if (!EXPRESS_BASE_URL) {
             console.log("NO BASE URL")
-            return NextResponse.json({ message: 'EXPRESS_AUTH_URL no configurada' }, { status: 500 });
+            return NextResponse.json({ message: 'EXPRESS_BASE_URL not configured' }, { status: 500 });
         }
         const { email, password } = await req.json();
         console.log("EMAIL AND PASSWORD:", email, password)
-        if (!email || !password) return NextResponse.json({ message: 'Email y password son requeridos' }, { status: 400 });
+        if (!email || !password) return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
 
         const expressResp = await fetch(EXPRESS_BASE_URL + "login/submit", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            // no-store para evitar caches accidentales
+            // no-store to prevent accidental caches
             cache: 'no-store',
             body: JSON.stringify({ email, password }),
         });
         console.log("RESPONSE:", expressResp)
         if (!expressResp.ok) {
-            // Propaga mensaje de Express si viene
+            const errorPayload = await expressResp.json().catch(() => ({}));
+            const motive = errorPayload?.motive || 'Invalid credentials or authentication error';
             return NextResponse.json(
-                { message: 'Credenciales inválidas o error de autenticación' },
+                { message: motive },
                 { status: expressResp.status || 401 }
             );
         }
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
         console.log("PAYLOAD:", payload)
         if (!ok || !idToken) {
             return NextResponse.json(
-                { message: 'Respuesta de Express inválida: falta idToken' },
+                { message: 'Invalid Express response: missing idToken' },
                 { status: 502 }
             );
         }
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
         res.cookies.set('session', sessionCookie, {
             httpOnly: true,
             secure: isProd,
-            sameSite: 'lax', // si harás cross-site a otros dominios, cambia a 'none' + secure
+            sameSite: 'lax', // if you will do cross-site to other domains, change to 'none' + secure
             path: '/',
             maxAge: Math.floor(SESSION_MAX_AGE_MS / 1000),
         });
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error(error)
         return NextResponse.json(
-            { message: 'Error procesando autenticación' },
+            { message: 'Error processing authentication' },
             { status: 500 }
         );
     }

@@ -4,35 +4,37 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/users/userContext';
 import Loader from "@/components/common/Loader";
-import Category from "@/components/navRoutes/Category"
-import {mockCategory} from"@/lib/mocks/mockCategories";
-import {Divider} from "antd";
+import Category from '../sitemap/_components/Category'; // Updated import path
+import { mockCategory } from '../sitemap/data/mockData'; // Updated import path
+import { Separator } from "@/components/ui/separator"; // New import
 
-const Home: React.FC = () => {
+export default function HomePage() {
     const [time, setTime] = useState(new Date());
-    const [loading,setLoading] = useState(false);
-    const { user, setUser } = useUser();
+    const [loading, setLoading] = useState(false);
+    const { user } = useUser();
     const [hasMounted, setHasMounted] = useState(false);
 
     useEffect(() => {
         setHasMounted(true);
-        setTime(new Date());
         const iv = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(iv);
     }, [])
 
-    useEffect(()=>{
-        const loadApp = async () =>{
-            if(!user || user.id == ""){
+    useEffect(() => {
+        const loadApp = async () => {
+            if (!user || !user.ID) { // Changed to user.ID
                 return;
             }
-            try{
-
-            }catch(e){
+            try {
+                // Future data loading logic here
+            } catch (e) {
 
             }
         }
-    })
+        if (user) {
+            loadApp();
+        }
+    }, [user])
 
     if (loading) {
         return <Loader message="Obteniendo datos de usuario..." />;
@@ -40,7 +42,7 @@ const Home: React.FC = () => {
     return (
         <div className='flex w-full justify-center flex-col'>
             <div className='flex flex-row w-full items-center  px-10 pt-5'>
-                <div className='flex w-2/3 items-center'><span className='text-2xl'> Bienvenido {user?.name}</span></div>
+                <div className='flex w-2/3 items-center'><span className='text-2xl'> Bienvenido {user?.NAME}</span></div>
                 <div className='flex w-1/3 '>
                     {hasMounted && time ? (
                         <span className="text-2xl font-mono font-thin text-[#005B94] ">
@@ -55,14 +57,12 @@ const Home: React.FC = () => {
                     )}
                 </div>
             </div>
-            <Divider orientation="left" style={{ borderColor: '#808080'}}/>
-            {/* Contenedor de Favoritos*/}
-            <Divider orientation="left" style={{ borderColor: '#808080',fontSize:'24px' }}>Favoritos</Divider>
+            <Separator className="my-4" />
+            <h2 className="text-2xl font-semibold tracking-tight px-10">Favoritos</h2>
+            <Separator className="my-4" />
             <div>
-                <Category name={mockCategory.name} routes={mockCategory.routes}/>
+                <Category name={mockCategory.name} routes={mockCategory.routes} />
             </div>
         </div>
     )
 };
-
-export default Home;
