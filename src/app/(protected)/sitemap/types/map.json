@@ -1,0 +1,77 @@
+{
+  "categories": [
+    {
+      "name": "Clientes",
+      "routes": [
+        {
+          "id": "clients-view",
+          "name": "Ver Clientes",
+          "path": "/clients",
+          "permission": "clients.view"
+        }
+      ]
+    },
+    {
+      "name": "Servicios",
+      "routes": [
+        {
+          "id": "services-view",
+          "name": "Ver Servicios",
+          "path": "/services",
+          "permission": "services.view"
+        }
+      ]
+    },
+    {
+      "name": "Inspecciones",
+      "routes": [
+        {
+          "id": "reports-view",
+          "name": "Ver Reportes",
+          "path": "/reports",
+          "permission": "reports.view"
+        },
+        {
+          "id": "reports-create",
+          "name": "Crear Reporte",
+          "path": "/reports/create",
+          "permission": "reports.create"
+        }
+      ]
+    },
+    {
+      "name": "Catálogos",
+      "routes": [
+        {
+          "id": "parts-view",
+          "name": "Piezas",
+          "path": "/parts",
+          "permission": "parts.view"
+        },
+        {
+          "id": "defects-view",
+          "name": "Defectos",
+          "path": "/defects",
+          "permission": "defects.view"
+        }
+      ]
+    },
+    {
+      "name": "Administración",
+      "routes": [
+        {
+          "id": "users-view",
+          "name": "Usuarios",
+          "path": "/users",
+          "permission": "users.view"
+        },
+        {
+          "id": "roles-view",
+          "name": "Roles",
+          "path": "/roles",
+          "permission": "roles.view"
+        }
+      ]
+    }
+  ]
+}

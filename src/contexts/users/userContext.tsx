@@ -1,7 +1,7 @@
 'use client'
 //ozcabaudit\src\contexts\users\userContext.tsx
 import { createContext, useContext,useState, ReactNode} from 'react';
-import {IUser} from "@/app/users/types/users.types";
+import {IUser} from "@/app/(protected)/users/types/users.types";
 
 type UserContextType = {
     user: IUser|null;

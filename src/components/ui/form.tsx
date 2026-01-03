@@ -15,6 +15,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
+import { projectShutdown } from "next/dist/build/swc/generated-native"
 
 const Form = FormProvider
 
@@ -89,8 +90,9 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function FormLabel({
   className,
+  required = false,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & { required?: boolean }) {
   const { error, formItemId } = useFormField()
 
   return (
@@ -100,7 +102,14 @@ function FormLabel({
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      <div className="flex flex-row gap-1">
+        {required && <span className="text-destructive ml-1">*</span>}
+        {props.children}
+      </div>
+      
+
+    </Label>
   )
 }
 

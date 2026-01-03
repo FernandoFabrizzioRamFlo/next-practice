@@ -17,9 +17,9 @@ const app = admin.apps.length
     });
 
 // Configure session duration
-const SESSION_MAX_AGE_MS = Number(process.env.FB_SESSION_MAX_AGE_MS ?? 1 * 60 * 60 * 1000); // 1h
+const SESSION_MAX_AGE_MS = Number(process.env.FB_SESSION_MAX_AGE_MS || 1 * 60 * 60 * 1000); // 1h
 // WHY: Moderate lifespan. You can increase it (e.g., 5 days) if your use case requires it.
-const EXPRESS_BASE_URL = process.env.EXPRESS_BASE_URL;
+const EXPRESS_BASE_URL = process.env.EXPRESS_BASE_URL || "";
 
 export async function POST(req: NextRequest) {
     try {
@@ -28,13 +28,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'EXPRESS_BASE_URL not configured' }, { status: 500 });
         }
         const { email, password } = await req.json();
-        console.log("EMAIL AND PASSWORD:", email, password)
-        if (!email || !password) return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
 
-        const expressResp = await fetch(EXPRESS_BASE_URL + "login/submit", {
+        if (!email || !password) return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
+        const backendLogin = EXPRESS_BASE_URL + "/login/submit"
+        console.log(backendLogin)
+        const expressResp = await fetch(backendLogin, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            // no-store to prevent accidental caches
             cache: 'no-store',
             body: JSON.stringify({ email, password }),
         });

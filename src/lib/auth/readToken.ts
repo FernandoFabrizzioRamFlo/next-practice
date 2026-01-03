@@ -1,6 +1,6 @@
 //ozcabaudit\src\lib\auth\readToken.ts
 import jwt from 'jsonwebtoken';
-import {IUser} from "@/app/users/types/users.types";
+import {IUser} from "@/app/(protected)/users/types/users.types";
 
 const secret:string = process.env.JWT_KEY ?? "dev";
 

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { UserProvider } from "@/contexts/users/userContext"; // Import UserProvider
+import "./globals.css";
+import { UserProvider } from "@/contexts/users/userContext";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -10,12 +12,15 @@ export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
-}>) {    return (
+}>) {
+    return (
         <html lang="en">
             <body>
-                <UserProvider> {/* Wrap children with UserProvider */}
-                    {children}
-                </UserProvider>
+                <NuqsAdapter>
+                    <UserProvider>
+                        {children}
+                    </UserProvider>
+                </NuqsAdapter>
             </body>
         </html>
     );

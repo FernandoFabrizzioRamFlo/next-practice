@@ -12,7 +12,6 @@ export default function RootLayout({
 }>) {
     return (
         <div>
-            <HeaderLogin/>
             {children}
         </div>
     );

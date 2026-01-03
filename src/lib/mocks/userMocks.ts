@@ -1,4 +1,4 @@
-import {IUser} from '@/app/users/types/users.types';
+import {IUser} from '@/app/(protected)/users/types/users.types';
 import jwt from 'jsonwebtoken';
 
 const getMockUser = ():IUser => {
