@@ -33,8 +33,10 @@ import {
   Pencil,
   Trash2,
   Building2,
+  Plus,
 } from "lucide-react";
 import UpdateClientModal from "./UpdateClientModal";
+import CreateClientModal from "./CreateClientModal";
 import { deleteClient } from "@/app/(protected)/clients/actions/clients.actions";
 
 type Props = {
@@ -46,6 +48,7 @@ export default function ClientsTable({ initialData }: Props) {
   const [isPending, startTransition] = useTransition();
 
   // Modal state
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
@@ -110,12 +113,14 @@ export default function ClientsTable({ initialData }: Props) {
 
   return (
     <div className="mt-4 flex w-full flex-col gap-4 px-4 lg:gap-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-foreground mt-1 text-xl font-bold text-balance lg:text-3xl">
-            Clientes
-          </h1>
-        </div>
+      <div className="flex items-center justify-between">
+        <h1 className="text-foreground text-xl font-bold text-balance lg:text-3xl">
+          Clientes
+        </h1>
+        <Button onClick={() => setCreateModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Crear Cliente
+        </Button>
       </div>
 
       {/* Filters */}
@@ -312,6 +317,12 @@ export default function ClientsTable({ initialData }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Create Client Modal */}
+      <CreateClientModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+      />
 
       {/* Update Client Modal */}
       <UpdateClientModal

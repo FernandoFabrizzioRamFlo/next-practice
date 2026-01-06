@@ -12,27 +12,45 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateClient, getClientById } from "@/app/(protected)/clients/actions/clients.actions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { updateService, getServiceById } from "@/app/(protected)/services/actions/services.actions";
+import { IClient } from "@/app/(protected)/clients/types/clients.types";
 
-interface UpdateClientModalProps {
-  clientId: number | null;
+interface UpdateServiceModalProps {
+  serviceId: number | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  clients: IClient[];
 }
 
-export default function UpdateClientModal({
-  clientId,
+function formatDateForInput(dateStr: string | null): string {
+  if (!dateStr) return "";
+  // Handle both ISO string and date-only formats
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "";
+  return date.toISOString().split('T')[0];
+}
+
+export default function UpdateServiceModal({
+  serviceId,
   open,
   onOpenChange,
-}: UpdateClientModalProps) {
+  clients,
+}: UpdateServiceModalProps) {
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
+    client_id: "",
     name: "",
-    contact_person: "",
-    email: "",
-    phone_number: "",
+    start_date: "",
+    end_date: "",
   });
 
   // Reset state when modal closes
@@ -40,40 +58,40 @@ export default function UpdateClientModal({
     if (!open) {
       setError(null);
       setFormData({
+        client_id: "",
         name: "",
-        contact_person: "",
-        email: "",
-        phone_number: "",
+        start_date: "",
+        end_date: "",
       });
     }
   }, [open]);
 
-  // Fetch client data when modal opens
+  // Fetch service data when modal opens
   useEffect(() => {
-    if (open && clientId) {
+    if (open && serviceId) {
       setIsLoading(true);
       setError(null);
-      getClientById(clientId)
+      getServiceById(serviceId)
         .then((result) => {
           if (result.success && result.data) {
             setFormData({
+              client_id: String(result.data.client_id),
               name: result.data.name || "",
-              contact_person: result.data.contact_person || "",
-              email: result.data.email || "",
-              phone_number: result.data.phone_number || "",
+              start_date: formatDateForInput(result.data.start_date),
+              end_date: formatDateForInput(result.data.end_date),
             });
           } else {
-            setError(result.error || "Error al cargar cliente");
+            setError(result.error || "Error al cargar servicio");
           }
         })
         .catch(() => {
-          setError("Error al cargar cliente");
+          setError("Error al cargar servicio");
         })
         .finally(() => {
           setIsLoading(false);
         });
     }
-  }, [open, clientId]);
+  }, [open, serviceId]);
 
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -81,21 +99,25 @@ export default function UpdateClientModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientId) return;
+    if (!serviceId) return;
 
     setError(null);
     startTransition(async () => {
-      const result = await updateClient(clientId, formData);
+      const result = await updateService(serviceId, {
+        client_id: formData.client_id ? parseInt(formData.client_id, 10) : undefined,
+        name: formData.name || undefined,
+        start_date: formData.start_date || undefined,
+        end_date: formData.end_date || undefined,
+      });
       if (result.success) {
         onOpenChange(false);
       } else {
-        setError(result.error || "Error al actualizar cliente");
+        setError(result.error || "Error al actualizar servicio");
       }
     });
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    // Prevent closing while submitting
     if (!newOpen && isPending) return;
     onOpenChange(newOpen);
   };
@@ -104,9 +126,9 @@ export default function UpdateClientModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Actualizar Cliente</DialogTitle>
+          <DialogTitle>Actualizar Servicio</DialogTitle>
           <DialogDescription>
-            Modifica los datos del cliente y guarda los cambios.
+            Modifica los datos del servicio y guarda los cambios.
           </DialogDescription>
         </DialogHeader>
 
@@ -118,42 +140,51 @@ export default function UpdateClientModal({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Nombre</Label>
+                <Label htmlFor="update-client">Cliente</Label>
+                <Select
+                  value={formData.client_id}
+                  onValueChange={(value) => handleChange("client_id", value)}
+                  disabled={isPending}
+                >
+                  <SelectTrigger id="update-client">
+                    <SelectValue placeholder="Seleccionar cliente" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((client) => (
+                      <SelectItem key={client.id} value={String(client.id)}>
+                        {client.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="update-name">Descripción</Label>
                 <Input
-                  id="name"
+                  id="update-name"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   disabled={isPending}
-                  required
+                  placeholder="Descripción del servicio"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="contact_person">Persona de Contacto</Label>
+                <Label htmlFor="update-start_date">Fecha de Inicio</Label>
                 <Input
-                  id="contact_person"
-                  value={formData.contact_person}
-                  onChange={(e) => handleChange("contact_person", e.target.value)}
+                  id="update-start_date"
+                  type="date"
+                  value={formData.start_date}
+                  onChange={(e) => handleChange("start_date", e.target.value)}
                   disabled={isPending}
-                  required
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
+                <Label htmlFor="update-end_date">Fecha de Fin</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  disabled={isPending}
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phone_number">Teléfono</Label>
-                <Input
-                  id="phone_number"
-                  value={formData.phone_number}
-                  onChange={(e) => handleChange("phone_number", e.target.value)}
+                  id="update-end_date"
+                  type="date"
+                  value={formData.end_date}
+                  onChange={(e) => handleChange("end_date", e.target.value)}
                   disabled={isPending}
                 />
               </div>
